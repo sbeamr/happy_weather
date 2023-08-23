@@ -58,8 +58,7 @@ def get_weather(region):
     # 风向
     wind_dir = response['daily'][0]["windDirDay"]
     return weather, temp, wind_dir, xigua
- 
-#--------关注微信公众号：繁星资源，更多资源等你拿----------
+
 def get_birthday(birthday, year, today):
     birthday_year = birthday.split("-")[0]
     # 判断是否为农历生日
