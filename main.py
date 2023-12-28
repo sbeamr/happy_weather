@@ -6,6 +6,7 @@ from zhdate import ZhDate
 import sys
 import os
 import requests
+import http.client, urllib, json
  
  
 def get_color():
@@ -111,9 +112,19 @@ def get_ciba():
     note_en = r.json()["content"]
     note_ch = r.json()["note"]
     return note_ch, note_en
+
+def get_saylove():
+    conn = http.client.HTTPSConnection('apis.tianapi.com')  #接口域名
+    params = urllib.parse.urlencode({'key':'f96ad2c84390e440ff6932f9a3cefc88'})
+    headers = {'Content-type':'application/x-www-form-urlencoded'}
+    conn.request('POST','/saylove/index',params,headers)
+    tianapi = conn.getresponse()
+    result = tianapi.read()
+    data = result.decode('utf-8')
+    dict_data = json.loads(data)
+    return dict_data
  
- 
-def send_message(to_user, access_token, region_name, weather, temp, xigua, wind_dir, note_ch, note_en):
+def send_message(to_user, access_token, region_name, weather, temp, xigua, wind_dir, say_love):
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
     week_list = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]
     year = localtime().tm_year
@@ -163,14 +174,18 @@ def send_message(to_user, access_token, region_name, weather, temp, xigua, wind_
                 "value": love_days,
                 "color": get_color()
             },
-            "note_en": {
-                "value": note_en,
+            "say_love": {
+                "value": say_love,
                 "color": get_color()
             },
-            "note_ch": {
-                "value": note_ch,
-                "color": get_color()
-            },
+            # "note_en": {
+            #     "value": note_en,
+            #     "color": get_color()
+            # },
+            # "note_ch": {
+            #     "value": note_ch,
+            #     "color": get_color()
+            # },
             "xigua":{
                 "value": xigua,
                 "color": get_color()
@@ -224,12 +239,14 @@ if __name__ == "__main__":
     # 传入地区获取天气信息
     region = config["region"]
     weather, temp, wind_dir,xigua = get_weather(region)
-    note_ch = config["note_ch"]
-    note_en = config["note_en"]
-    if note_ch == "" and note_en == "":
-        # 获取词霸每日金句
-        note_ch, note_en = get_ciba()
+    say_love = get_saylove()
+    # note_ch = config["note_ch"]
+    # note_en = config["note_en"]
+    # if note_ch == "" and note_en == "":
+    #     # 获取词霸每日金句
+    #     note_ch, note_en = get_ciba()
     # 公众号推送消息
     for user in users:
-        send_message(user, accessToken, region, weather, temp, xigua, wind_dir, note_ch, note_en)
+        # send_message(user, accessToken, region, weather, temp, xigua, wind_dir, note_ch, note_en)
+        send_message(user, accessToken, region, weather, temp, xigua, wind_dir, say_love)
     os.system("pause")
