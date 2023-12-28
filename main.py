@@ -222,6 +222,7 @@ def send_message(to_user, access_token, region_name, weather, temp, xigua, wind_
 if __name__ == "__main__":
     try:
         with open("config.txt", encoding="utf-8") as f:
+            print(f.read())
             config = eval(f.read())
     except FileNotFoundError:
         print("推送消息失败，请检查config.txt文件是否与程序位于同一路径")
