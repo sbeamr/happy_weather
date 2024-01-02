@@ -122,7 +122,7 @@ def get_saylove():
     result = tianapi.read()
     data = result.decode('utf-8')
     dict_data = json.loads(data)
-    return dict_data
+    return dict_data['result']['content']
  
 def send_message(to_user, access_token, region_name, weather, temp, xigua, wind_dir, say_love):
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
